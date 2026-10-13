@@ -51,8 +51,13 @@ class WriteScriptPlaceholderTest(unittest.TestCase):
             try:
                 S.write_script("测试", "测试")
                 data = json.loads((Path(td) / "页面脚本.json").read_text(encoding="utf-8"))
-                self.assertEqual(data["config"]["account_name"], "账号名")
+                # 占位符沿用 package.py 认的 {账号名}，打包清单才会标 placeholder_account；水印字去掉花括号。
+                self.assertEqual(data["config"]["account_name"], "{账号名}")
                 self.assertEqual(data["config"]["watermark_text"], "账号名")
+                S.write_script("测试", "测试", account="某某")
+                data = json.loads((Path(td) / "页面脚本.json").read_text(encoding="utf-8"))
+                self.assertEqual(data["config"]["account_name"], "某某")
+                self.assertEqual(data["config"]["watermark_text"], "某某")
             finally:
                 S.NOTE, S.OUT, S.PROTECT, S.pages = saved[0], saved[1], saved[2], saved[3]
 

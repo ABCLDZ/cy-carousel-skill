@@ -127,7 +127,7 @@ import 手排 as S
 
 S.init('笔记目录')
 # 逐页：Canvas().put() 摆图和纸条 → headline / big / body / sticker / label 写字 → page() 组页
-S.write_script('题目', '制作.py')   # 生成 页面脚本.json
+S.write_script('题目', '制作.py', account='你的账号名')   # 生成 页面脚本.json；account 是水印署名
 ```
 
 ```bash

@@ -36,7 +36,7 @@ description: 制作 AI 科技类小红书图文轮播（封面＋10张内页，1
 1. **选题**：先列 2–4 个候选，比素材（人物照/截图够不够清晰、许可干不干净、能否凑够 12 份以上不同原素材）、体裁（是不是「什么是 X」或反常识）、事实风险（有没有一手出处、争议多不多），选一个。
 2. **查证**：建事实表，写「不写的内容」和「争议与写法」两节。论文用 PyMuPDF 定位要上版面的原句（页码＋0–1 框）。
 3. **找素材**：下载原图和论文 PDF，记许可和 SHA256，逐张看图（画面、人脸位置、能不能裁 3:4）。Wikimedia 请求放慢，遇 429 等一分钟。
-4. **手排**：先出同字对比小样定正文字体；写 `制作.py`，`import 手排 as S`，`S.init(笔记目录)`；逐页用 `Canvas().put()` 摆图和纸条，用 `headline/big/body/sticker/label` 写字，`page(..., backdrop=...)` 组页，最后 `S.write_script(题目, '制作.py')` 生成 `页面脚本.json`。完整写法见 `examples/03-聪明汉斯/制作.py`。
+4. **手排**：先出同字对比小样定正文字体；写 `制作.py`，`import 手排 as S`，`S.init(笔记目录)`；逐页用 `Canvas().put()` 摆图和纸条，用 `headline/big/body/sticker/label` 写字，`page(..., backdrop=...)` 组页，最后 `S.write_script(题目, '制作.py', account='账号名')` 生成 `页面脚本.json`（`account` 是水印署名；不传会印占位符「账号名」）。完整写法见 `examples/03-聪明汉斯/制作.py`。
 5. **渲染**：`python3 scripts/render.py 页面脚本.json --out pages --assets-root .`；`S.preview('pages', '全套预览.jpg')` 出缩略图，逐页看：文字出界、压字、红圈标错、纸条带半截字、大块空白。
 6. **对照**（有参照页时）：`python3 scripts/对照.py 参照.jpg pages/p03.png` 出左右并排图（同高）和文字行偏差表（四边、字高，1440 宽 px 与 %，超 1% 标红），按表调字号和位置再渲染。
 7. **检查**：`python3 scripts/check_all.py 页面脚本.json --pages pages --assets-root .`，`errors` 必须为零。可选严格视觉：加 `--strict-visual`（或页面脚本 `config.visual_gate: true`）后，留白超标和「与前页骨架相同」会列入 `visual_blockers` 并使退出码非零；色彩丰富度、原图数量等依赖体裁的建议项不参与。仅适用于正式稿的暗色调；三页小样和浅色调不跑这两项，会在 `checks.strict_visual` 写明不适用并在终端提示，`visual_blockers` 为空不代表通过。留白/骨架检查自身出错时也计入阻断。默认关闭。风格指标只作参考，别为凑指标改版式。

@@ -506,9 +506,13 @@ def font_sample(text, out, fonts=tuple(BODY_FONTS), size=60, w=1360, bg=PAGE_BG,
     return out
 
 
-def write_script(topic, built_by, path='页面脚本.json'):
+def write_script(topic, built_by, path='页面脚本.json', account=None):
+    """account：水印和署名用的账号名。不传就写占位符 {账号名}，打包清单会标 placeholder_account。"""
+    if not account:
+        print('提示：write_script 没传 account，水印会印占位符「账号名」；发布前用 account=\'你的账号名\' 重新生成', file=sys.stderr)
     script = {'schema_version': 1, 'built_by': built_by, 'topic': topic, 'tone': '暗', 'mode': 'production',
-              'config': {'tone': '暗', 'accent': CYAN, 'background': PAGE_BG, 'account_name': '账号名', 'watermark_text': '账号名',
+              'config': {'tone': '暗', 'accent': CYAN, 'background': PAGE_BG,
+                         'account_name': account or '{账号名}', 'watermark_text': account or '账号名',
                          'watermark_style': 'neutral', 'bookmark': False, 'cover_only': False, 'require_face_every_page': False},
               'delivery': {'main_cover': 'D', 'size': [W, H]}, 'pages': pages}
     (NOTE / path).write_text(json.dumps(script, ensure_ascii=False, indent=1),encoding='utf-8')
