@@ -486,7 +486,7 @@ def processed_image(e,base,target,cfg,audit=None):
   im=(ImageOps.colorize(gray,'#251e12','#efe3c9') if 'sepia' in fx else gray.convert('RGB')).convert('RGBA');im.putalpha(alpha)
  if 'aged' in fx:
   rgb=ImageEnhance.Color(im.convert('RGB')).enhance(.6);im=rgb.convert('RGBA');im.putalpha(alpha)
-  noise=Image.fromarray(np.random.default_rng(19).integers(65,195,(im.height,im.width,3),dtype=np.uint8),'RGB')
+  noise=Image.fromarray(np.random.default_rng(19).integers(65,195,(im.height,im.width),dtype=np.uint8),'L').convert('RGB')   # 单色颗粒：三通道同值
   im=Image.blend(im,noise.convert('RGBA'),.045);im.putalpha(alpha)
  if e.get('saturation',1)!=1:
   factor=e['saturation']

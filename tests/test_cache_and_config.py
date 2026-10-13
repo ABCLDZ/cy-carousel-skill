@@ -66,6 +66,15 @@ class AgedDeterminismTest(unittest.TestCase):
             second = RD.processed_image(*args).tobytes()
             self.assertEqual(first, second)
 
+    def test_aged_noise_is_monochrome(self):
+        # 噪点是灰度颗粒：纯灰输入加 aged 后，每个像素三通道仍相等，不能出现彩色噪点。
+        with tempfile.TemporaryDirectory() as td:
+            Image.new("RGB", (120, 90), (128, 128, 128)).save(Path(td) / "a.png")
+            out = RD.processed_image({"path": "a.png", "effects": ["aged"]}, td, (100, 100), {"cover_only": False})
+            r, g, b = out.convert("RGB").split()
+            self.assertEqual(r.tobytes(), g.tobytes())
+            self.assertEqual(g.tobytes(), b.tobytes())
+
 
 class PdfDocCacheTest(unittest.TestCase):
     def test_snap_find_strip_open_pdf_once(self):
