@@ -109,6 +109,24 @@ class PdfDocCacheTest(unittest.TestCase):
                 S.pymupdf.open = real_open
                 S.NOTE, S.OUT, S.PROTECT, S.pages = saved[0], saved[1], saved[2], saved[3]
 
+    def test_init_closes_cached_pdfs(self):
+        import pymupdf
+        with tempfile.TemporaryDirectory() as td, tempfile.TemporaryDirectory() as td2:
+            doc = pymupdf.open()
+            doc.new_page().insert_text((72, 100), "hello", fontsize=12)
+            doc.save(str(Path(td) / "t.pdf"))
+            doc.close()
+            saved = (S.NOTE, S.OUT, S.PROTECT, list(S.pages))
+            try:
+                S.init(td)
+                cached = S._doc("t.pdf")
+                self.assertEqual(len(S.PDF_DOCS), 1)
+                S.init(td2)
+                self.assertEqual(S.PDF_DOCS, {})
+                self.assertTrue(cached.is_closed)
+            finally:
+                S.NOTE, S.OUT, S.PROTECT, S.pages = saved[0], saved[1], saved[2], saved[3]
+
 
 if __name__ == "__main__":
     unittest.main()

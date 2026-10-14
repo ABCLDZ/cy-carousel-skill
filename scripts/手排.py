@@ -58,6 +58,9 @@ def _doc(pdf):
 
 def init(note, protect=(), out='collage'):
     global NOTE, OUT, PROTECT
+    for d in PDF_DOCS.values():          # 换笔记目录时关掉上一轮缓存的 PDF，句柄不累积
+        d.close()
+    PDF_DOCS.clear()
     NOTE = Path(note); OUT = NOTE / out; OUT.mkdir(parents=True, exist_ok=True)
     PROTECT = list(protect)
 
